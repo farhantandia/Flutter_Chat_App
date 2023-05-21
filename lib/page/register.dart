@@ -58,7 +58,7 @@ class _RegisterState extends State<Register> {
     }
   }
  void showNotifSnackBar(String message) {
-    _scaffoldKey.currentState!.showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }

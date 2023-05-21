@@ -1,16 +1,15 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class ForgotPassword extends StatelessWidget {
   var _controllerEmail = TextEditingController();
   var _formKey = GlobalKey<FormState>();
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void resetPassword() {
+  void resetPassword(BuildContext context) {
     FirebaseAuth.instance.sendPasswordResetEmail(email: _controllerEmail.text);
-    _scaffoldKey.currentState!.showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Link Reset Password has send to email')),
     );
   }
@@ -43,7 +42,7 @@ class ForgotPassword extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      resetPassword();
+                      resetPassword(context);
                     }
                   },
                   child: const Text(

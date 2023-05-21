@@ -17,15 +17,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  var _formKey = GlobalKey<FormState>();
-  var _controllerEmail = TextEditingController();
-  var _controllerPassword = TextEditingController();
-  var _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  final _controllerEmail = TextEditingController();
+  final _controllerPassword = TextEditingController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void loginWithEmailAndPassword() async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _controllerEmail.text,
         password: _controllerPassword.text,
       );
@@ -37,8 +36,11 @@ class _LoginState extends State<Login> {
           String token = await NotifController.getTokenFromDevice();
           EventPerson.updatePersonToken(userCredential.user!.uid, token);
           EventPerson.getPerson(userCredential.user!.uid).then((person) {
+            print(person);
             Prefs.setPerson(person);
           });
+
+          showNotifSnackBar('Login success');
           Future.delayed(const Duration(milliseconds: 1700), () {
             Navigator.pushReplacement(
               context,
@@ -49,7 +51,7 @@ class _LoginState extends State<Login> {
           _controllerPassword.clear();
         } else {
           print('not verified');
-          _scaffoldKey.currentState!.showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Email not verified'),
               action: SnackBarAction(
@@ -77,7 +79,7 @@ class _LoginState extends State<Login> {
   }
 
   void showNotifSnackBar(String message) {
-    _scaffoldKey.currentState!.showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
@@ -138,8 +140,7 @@ class _LoginState extends State<Login> {
                         const SizedBox(height: 30),
                         TextFormField(
                           controller: _controllerEmail,
-                          validator: (value) =>
-                              value == '' ? "Don't Empty" : null,
+                          validator: (value) => value == '' ? "Don't Empty" : null,
                           decoration: const InputDecoration(
                             hintText: 'Email',
                             prefixIcon: Icon(Icons.email),
@@ -149,8 +150,7 @@ class _LoginState extends State<Login> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _controllerPassword,
-                          validator: (value) =>
-                              value == '' ? "Don't Empty" : null,
+                          validator: (value) => value == '' ? "Don't Empty" : null,
                           decoration: const InputDecoration(
                             hintText: 'Password',
                             prefixIcon: const Icon(Icons.lock),
@@ -178,7 +178,10 @@ class _LoginState extends State<Login> {
                                 loginWithEmailAndPassword();
                               }
                             },
-                            child: const Text('Login', style: const TextStyle(color: Colors.white),),
+                            child: const Text(
+                              'Login',
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                       ],

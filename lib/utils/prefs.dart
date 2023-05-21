@@ -23,6 +23,6 @@ class Prefs {
 
   static void setPerson(Person person) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    // pref.setString('person', person.toJson());
+    pref.setString('person', person.toJson());
   }
 }

@@ -11,7 +11,7 @@ class NotifController {
     if (Platform.isIOS) {
       var initializationSettingsAndroid =
           const AndroidInitializationSettings('icon_notification');
-      var initializationSettingsIOS = IOSInitializationSettings(
+      var initializationSettingsIOS = DarwinInitializationSettings(
         requestSoundPermission: true,
         requestBadgePermission: true,
         requestAlertPermission: true,
@@ -23,12 +23,12 @@ class NotifController {
 
       await _flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
-        onSelectNotification: (payload) async {},
+        onDidReceiveNotificationResponse : (payload) async {},
       );
     } else {
       var initializationSettingsAndroid =
           const AndroidInitializationSettings('icon_notification');
-      var initializationSettingsIOS = IOSInitializationSettings(
+      var initializationSettingsIOS = DarwinInitializationSettings(
         onDidReceiveLocalNotification: (id, title, body, payload) async {},
       );
       var initializationSettings = InitializationSettings(
@@ -36,7 +36,7 @@ class NotifController {
           iOS: initializationSettingsIOS);
       await _flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
-        onSelectNotification: (payload) async {},
+        onDidReceiveNotificationResponse : (payload) async {},
       );
     }
   }

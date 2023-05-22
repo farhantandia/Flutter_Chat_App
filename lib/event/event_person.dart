@@ -32,7 +32,7 @@ class EventPerson {
     }
   }
 
-  static void updatePersonToken(String myUid, String token) async {
+  static Future<void> updatePersonToken(String myUid, String token) async {
     try {
       // update profile
       FirebaseFirestore.instance

@@ -8,6 +8,7 @@ import 'package:flutter_chat_app/page/forgot_password.dart';
 import 'package:flutter_chat_app/page/register.dart';
 import 'package:flutter_chat_app/utils/notif_controller.dart';
 import 'package:flutter_chat_app/utils/prefs.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -21,8 +22,22 @@ class _LoginState extends State<Login> {
   final _controllerEmail = TextEditingController();
   final _controllerPassword = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  void showLoader() {
+    if (EasyLoading.isShow) {
+      return;
+    }
+    EasyLoading.show(status: "loading...");
+  }
+
+  /// To hide loader
+  void hideLoader() {
+    EasyLoading.dismiss();
+  }
 
   void loginWithEmailAndPassword() async {
+    FocusScope.of(context).unfocus();
+    showLoader();
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _controllerEmail.text,
@@ -31,17 +46,15 @@ class _LoginState extends State<Login> {
 
       if (userCredential.user!.uid != null) {
         if (userCredential.user!.emailVerified) {
-          print('succes');
-          showNotifSnackBar('Login...');
           String token = await NotifController.getTokenFromDevice();
-          EventPerson.updatePersonToken(userCredential.user!.uid, token);
-          EventPerson.getPerson(userCredential.user!.uid).then((person) {
+          await EventPerson.updatePersonToken(userCredential.user!.uid, token);
+          await EventPerson.getPerson(userCredential.user!.uid).then((person) {
             print(person);
             Prefs.setPerson(person);
           });
 
           showNotifSnackBar('Login success');
-          Future.delayed(const Duration(milliseconds: 1700), () {
+          await Future.delayed(const Duration(milliseconds: 500), () {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const Dashboard()),
@@ -69,13 +82,14 @@ class _LoginState extends State<Login> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        showNotifSnackBar('No user found for that email');
+        showNotifSnackBar('User not found');
         print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        showNotifSnackBar('Wrong password provided for that user');
+        showNotifSnackBar('Wrong password');
         print('Wrong password provided for that user.');
       }
     }
+    hideLoader();
   }
 
   void showNotifSnackBar(String message) {

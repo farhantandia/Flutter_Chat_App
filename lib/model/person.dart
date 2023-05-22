@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 class Person {
-  String email;
-  String name;
-  String photo;
-  String token;
-  String uid;
+  String email ="";
+  String name="";
+  String photo="";
+  String token="";
+  String uid="";
   
   Person({
     required this.email,

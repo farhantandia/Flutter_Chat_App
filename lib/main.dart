@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/page/dashboard.dart';
 import 'package:flutter_chat_app/page/login.dart';
 import 'package:flutter_chat_app/utils/notif_controller.dart';
 import 'package:flutter_chat_app/utils/prefs.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -37,8 +38,9 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Chat App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.teal,
         ),
+        builder: EasyLoading.init(),
         home: FutureBuilder(
             future: Prefs.getPerson(),
             builder: (context, snapshot) {

@@ -60,8 +60,14 @@ class Chat {
 
   String toJson() => json.encode(toMap());
 
-  factory Chat.fromJson(String source) => Chat.fromMap(json.decode(source));
-
+   factory Chat.fromJson(Map<String, dynamic> json) => Chat(
+       lastDateTime: json['lastDateTime']?.toInt() ?? 0,
+      isRead: json['isRead'] ?? false,
+      message: json['message'] ?? '',
+      type: json['type'] ?? '',
+      uidReceiver: json['uidReceiver'] ?? '',
+      uidSender: json['uidSender'] ?? '',
+      );
   @override
   String toString() {
     return 'Chat(lastDateTime: $lastDateTime, isRead: $isRead, message: $message, type: $type, uidReceiver: $uidReceiver, uidSender: $uidSender)';

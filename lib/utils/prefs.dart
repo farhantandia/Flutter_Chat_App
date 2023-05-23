@@ -25,5 +25,8 @@ class Prefs {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString('person', person.toJson());
   }
-  
+  static void clear() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.clear();
+  }
 }

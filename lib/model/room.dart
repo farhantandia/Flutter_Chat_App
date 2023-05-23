@@ -78,7 +78,17 @@ class Room {
 
   String toJson() => json.encode(toMap());
 
-  factory Room.fromJson(String source) => Room.fromMap(json.decode(source));
+    factory Room.fromJson(Map<String, dynamic> json) => Room(
+      email: json['email'] ?? '',
+      inRoom: json['inRoom'] ?? false,
+      lastChat: json['lastChat'] ?? '',
+      lastDateTime: json['lastDateTime']?.toInt() ?? 0,
+      lastUid: json['lastUid'] ?? '',
+      name: json['name'] ?? '',
+      photo: json['photo'] ?? '',
+      type: json['type'] ?? '',
+      uid: json['uid'] ?? '',
+      );
 
   @override
   String toString() {

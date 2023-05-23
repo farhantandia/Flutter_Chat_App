@@ -55,8 +55,13 @@ class Person {
 
   String toJson() => json.encode(toMap());
 
-  factory Person.fromJson(String source) => Person.fromMap(json.decode(source));
-
+    factory Person.fromJson(Map<String, dynamic> json) => Person(
+        email: json['email'] ?? '',
+        name: json['name'] ?? '',
+        photo: json['photo'] ?? '',
+        token: json['token'] ?? '',
+        uid: json['uid'] ?? '',
+      );
   @override
   String toString() {
     return 'Person(email: $email, name: $name, photo: $photo, token: $token, uid: $uid)';

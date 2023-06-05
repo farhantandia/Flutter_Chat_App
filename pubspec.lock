@@ -330,10 +330,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_parsed_text
-      sha256: "0afae4a017341ddcb5276740550df6d21ad81ad6ec0faff4f2f01967e1a43064"
+      sha256: "529cf5793b7acdf16ee0f97b158d0d4ba0bf06e7121ef180abe1a5b59e32c1e2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.5"
+    version: "2.2.1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -364,10 +364,10 @@ packages:
     dependency: "direct main"
     description:
       name: grouped_list
-      sha256: "8e77847066a0b7a68b9bc7984462deb05386e173a2998778e316761a9982a451"
+      sha256: fef106470186081c32636aa055492eee7fc7fe8bf0921a48d31ded24821af19f
       url: "https://pub.dev"
     source: hosted
-    version: "3.7.1"
+    version: "5.1.2"
   http:
     dependency: "direct main"
     description:
@@ -556,10 +556,10 @@ packages:
     dependency: "direct main"
     description:
       name: photo_view
-      sha256: "0ea7b8f9c62f1267d19edabb5105715d353a4ea7f5bf230edf22d2ad2ed6a681"
+      sha256: "8036802a00bae2a78fc197af8a158e3e2f7b500561ed23b4c458107685e645bb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.3"
+    version: "0.14.0"
   platform:
     dependency: transitive
     description:

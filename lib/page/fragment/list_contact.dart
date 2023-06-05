@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/event/event_person.dart';
 import 'package:flutter_chat_app/model/person.dart';
 import 'package:flutter_chat_app/model/room.dart';
 import 'package:flutter_chat_app/page/chat_room.dart';
+import 'package:flutter_chat_app/page/profile_person.dart';
 import 'package:flutter_chat_app/utils/prefs.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -29,7 +30,7 @@ class _ListContactState extends State<ListContact> {
   }
 
   void getMyPerson() async {
-    Person person = await Prefs.getPerson();
+    Person? person = await Prefs.getPerson();
     setState(() {
       _myPerson = person;
     });
@@ -107,43 +108,46 @@ class _ListContactState extends State<ListContact> {
             ),
             OutlinedButton(
               child: const Text('Close'),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, false),
             ),
           ],
         );
       },
     );
     if (value) {
-      
-    EasyLoading.show(status: "loading...");
-      String personUid = await EventPerson.checkEmail(_controllerEmail.text);
-      if (personUid != '') {
-        EventPerson.getPerson(personUid).then((person) {
-          EventContact.addContact(myUid: _myPerson!.uid, person: person);
-        });
-        
-    EasyLoading.showSuccess("Contact added!");
+      if (_controllerEmail.text != _myPerson!.email) {
+        EasyLoading.show(status: "loading...");
+        String personUid = await EventPerson.checkEmail(_controllerEmail.text);
+        if (personUid != '') {
+          EventPerson.getPerson(personUid).then((person) {
+            EventContact.addContact(myUid: _myPerson!.uid, person: person);
+          });
+
+          EasyLoading.showSuccess("Contact added!");
+        } else {
+          EasyLoading.showError("Contact not found!");
+        }
       }else{
         
-    EasyLoading.showError("Contact not found!");
+          EasyLoading.showError("Invalid Contact");
       }
     }
     _controllerEmail.clear();
   }
-  
+
   Widget itemContact(Person person) {
     return ListTile(
       leading: GestureDetector(
         onTap: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => ProfilePerson(
-          //       person: person,
-          //       myUid: _myPerson!.uid,
-          //     ),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilePerson(
+                person: person,
+                myUid: _myPerson!.uid,
+              ),
+            ),
+          );
         },
         child: SizedBox(
           width: 40,
@@ -151,14 +155,14 @@ class _ListContactState extends State<ListContact> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40),
             child: FadeInImage(
-              placeholder: AssetImage('assets/user-pic.png'),
+              placeholder: const AssetImage('assets/logo_flikchat.png'),
               image: NetworkImage(person.photo),
               width: 40,
               height: 40,
               fit: BoxFit.cover,
               imageErrorBuilder: (context, error, stackTrace) {
                 return Image.asset(
-                  'assets/logo_flikchat.png',
+                  'assets/user-pic.png',
                   width: 40,
                   height: 40,
                   fit: BoxFit.cover,
@@ -171,7 +175,7 @@ class _ListContactState extends State<ListContact> {
       title: Text(person.name),
       subtitle: Text(person.email),
       trailing: IconButton(
-        icon: Icon(Icons.message),
+        icon: const Icon(Icons.message),
         onPressed: () {
           Room room = Room(
             email: person.email,

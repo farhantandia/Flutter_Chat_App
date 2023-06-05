@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -48,27 +50,33 @@ class _LoginState extends State<Login> {
         if (userCredential.user!.emailVerified) {
           String token = await NotifController.getTokenFromDevice();
           await EventPerson.updatePersonToken(userCredential.user!.uid, token);
-          await EventPerson.getPerson(userCredential.user!.uid).then((person) {
-            print(person);
-            Prefs.setPerson(person);
-          });
+          await EventPerson.getPerson(userCredential.user!.uid).then((person) async {
+            if (person != null) {
+              
+              Prefs.setPerson(person);
 
-          showNotifSnackBar('Login success');
-          await Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const Dashboard()),
-            );
+              showNotifSnackBar('Login success');
+              await Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Dashboard()),
+                );
+              });
+            } else {
+              showNotifSnackBar('Sign in failed');
+              print('failed');
+            }
+
+            _controllerEmail.clear();
+            _controllerPassword.clear();
           });
-          _controllerEmail.clear();
-          _controllerPassword.clear();
         } else {
           print('not verified');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Email not verified'),
               action: SnackBarAction(
-                label: 'Send Verif',
+                label: 'Send Verification',
                 onPressed: () async {
                   await userCredential.user!.sendEmailVerification();
                 },
@@ -77,7 +85,7 @@ class _LoginState extends State<Login> {
           );
         }
       } else {
-        showNotifSnackBar('Failed');
+        showNotifSnackBar('Sign in failed');
         print('failed');
       }
     } on FirebaseAuthException catch (e) {
@@ -87,6 +95,8 @@ class _LoginState extends State<Login> {
       } else if (e.code == 'wrong-password') {
         showNotifSnackBar('Wrong password');
         print('Wrong password provided for that user.');
+      }else if(e.code =='network-request-failed'){        
+        showNotifSnackBar('Network is unavailable');
       }
     }
     hideLoader();
@@ -101,6 +111,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       key: _scaffoldKey,
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -137,68 +148,74 @@ class _LoginState extends State<Login> {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              'assets/logo_flikchat.png',
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                        TextFormField(
-                          controller: _controllerEmail,
-                          validator: (value) => value == '' ? "Don't Empty" : null,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            prefixIcon: Icon(Icons.email),
-                          ),
-                          textAlignVertical: TextAlignVertical.center,
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _controllerPassword,
-                          validator: (value) => value == '' ? "Don't Empty" : null,
-                          decoration: const InputDecoration(
-                            hintText: 'Password',
-                            prefixIcon: const Icon(Icons.lock),
-                          ),
-                          textAlignVertical: TextAlignVertical.center,
-                          obscureText: true,
-                        ),
-                        const SizedBox(height: 16),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ForgotPassword(),
+                    child: AutofillGroup(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.asset(
+                                'assets/applogo.png',
+                                width: 250,
+                                height: 250,
+                                fit: BoxFit.cover,
                               ),
-                            );
-                          },
-                          child: const Text('Forgot Pasword?'),
-                        ),
-                        const SizedBox(height: 16),
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                loginWithEmailAndPassword();
-                              }
-                            },
-                            child: const Text(
-                              'Login',
-                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 30),
+                          TextFormField(
+                            controller: _controllerEmail,
+                            autofillHints: const [AutofillHints.email],
+                           onSaved: (value) => _controllerEmail.text = value!,
+                            validator: (value) => value == '' ? "Don't Empty" : null,
+                            decoration: const InputDecoration(
+                              hintText: 'Email',
+                              prefixIcon: Icon(Icons.email),
+                            ),
+                            textAlignVertical: TextAlignVertical.center,
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _controllerPassword,
+                            autofillHints: const [AutofillHints.password],
+                           onSaved: (value) => _controllerPassword.text = value!,
+                            validator: (value) => value == '' ? "Don't Empty" : null,
+                            decoration: const InputDecoration(
+                              hintText: 'Password',
+                              prefixIcon: const Icon(Icons.lock),
+                            ),
+                            textAlignVertical: TextAlignVertical.center,
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 16),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotPassword(),
+                                ),
+                              );
+                            },
+                            child: const Text('Forgot Pasword?'),
+                          ),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  loginWithEmailAndPassword();
+                                }
+                              },
+                              child: const Text(
+                                'Login',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

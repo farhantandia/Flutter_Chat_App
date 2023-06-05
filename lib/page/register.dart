@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/event/event_person.dart';
 import 'package:flutter_chat_app/model/person.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -11,24 +12,30 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
-
   var _formKey = GlobalKey<FormState>();
   var _controllerName = TextEditingController();
   var _controllerEmail = TextEditingController();
   var _controllerPassword = TextEditingController();
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  void showLoader() {
+    if (EasyLoading.isShow) {
+      return;
+    }
+    EasyLoading.show(status: "loading...");
+  }
+
   void registerAccount() async {
+    FocusScope.of(context).unfocus();
+    showLoader();
     if (await EventPerson.checkEmail(_controllerEmail.text) == '') {
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _controllerEmail.text,
           password: _controllerPassword.text,
         );
         if (userCredential.user!.uid != null) {
-          showNotifSnackBar('Register Success');
+          showNotifSnackBar('Register succes, Please check your email for verification');
           Person person = Person(
             email: _controllerEmail.text,
             name: _controllerName.text,
@@ -41,6 +48,7 @@ class _RegisterState extends State<Register> {
           _controllerName.clear();
           _controllerEmail.clear();
           _controllerPassword.clear();
+          Navigator.pop(context);
         } else {
           showNotifSnackBar('Register Failed');
         }
@@ -56,8 +64,10 @@ class _RegisterState extends State<Register> {
         print(e);
       }
     }
+    EasyLoading.dismiss();
   }
- void showNotifSnackBar(String message) {
+
+  void showNotifSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -66,6 +76,7 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       key: _scaffoldKey,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -106,18 +117,18 @@ class _RegisterState extends State<Register> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: Image.asset(
-                              'assets/logo_flikchat.png',
-                              width: 150,
-                              height: 150,
+                              'assets/applogo.png',
+                              width: 250,
+                              height: 250,
                               fit: BoxFit.cover,
                             ),
                           ),
+                        ),  Text('Sign Up',style: TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 30),
                         TextFormField(
                           controller: _controllerName,
-                          validator: (value) =>
-                              value == '' ? "Don't Empty" : null,
+                          validator: (value) => value == '' ? "Don't Empty" : null,
                           decoration: const InputDecoration(
                             hintText: 'Name',
                             prefixIcon: Icon(Icons.person),
@@ -127,8 +138,7 @@ class _RegisterState extends State<Register> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _controllerEmail,
-                          validator: (value) =>
-                              value == '' ? "Don't Empty" : null,
+                          validator: (value) => value == '' ? "Don't Empty" : null,
                           decoration: const InputDecoration(
                             hintText: 'Email',
                             prefixIcon: const Icon(Icons.email),
@@ -138,8 +148,7 @@ class _RegisterState extends State<Register> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _controllerPassword,
-                          validator: (value) =>
-                              value == '' ? "Don't Empty" : null,
+                          validator: (value) => value == '' ? "Don't Empty" : null,
                           decoration: const InputDecoration(
                             hintText: 'Password',
                             prefixIcon: const Icon(Icons.lock),
@@ -155,8 +164,10 @@ class _RegisterState extends State<Register> {
                                 registerAccount();
                               }
                             },
-                            child: const Text('Register', style: TextStyle(
-                            color: Colors.white),),
+                            child: const Text(
+                              'Register',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                       ],

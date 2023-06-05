@@ -3,24 +3,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/model/person.dart';
 
 class EventContact {
-  static void addContact({String? myUid, Person? person}) {
+  static void addContact({String? myUid, Person? person}) async{
     try {
-      FirebaseFirestore.instance
+     await FirebaseFirestore.instance
           .collection('person')
           .doc(myUid)
           .collection('contact')
           .doc(person?.uid)
           .set(person!.toMap())
-          .then((value) => null)
+          .then((value) => print)
           .catchError((onError) => print(onError));
     } catch (e) {
       print(e);
     }
   }
 
-  static void deleteContact({String? myUid, String? personUid}) {
+  static Future<void> deleteContact({String? myUid, String? personUid}) async{
     try {
-      FirebaseFirestore.instance
+    await  FirebaseFirestore.instance
           .collection('person')
           .doc(myUid)
           .collection('contact')

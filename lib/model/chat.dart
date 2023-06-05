@@ -57,9 +57,14 @@ class Chat {
       uidSender: map['uidSender'] ?? '',
     );
   }
-
-  String toJson() => json.encode(toMap());
-
+ Map<String, dynamic> toJson() => {
+        'lastDateTime': lastDateTime,
+        'isRead': isRead,
+        'message': message,
+        'type': type,
+        'uidReceiver': uidReceiver,
+        'uidSender': uidSender,
+      };
    factory Chat.fromJson(Map<String, dynamic> json) => Chat(
        lastDateTime: json['lastDateTime']?.toInt() ?? 0,
       isRead: json['isRead'] ?? false,

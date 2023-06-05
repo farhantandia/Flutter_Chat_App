@@ -24,10 +24,22 @@ class EventStorage {
     }
   }
 
-  static deleteOldFile(String oldUrl) async {
+  static Future<void> deleteOldFile(String oldUrl) async {
     try {
       String urlFile = FirebaseStorage.instance.refFromURL(oldUrl).fullPath;
       await FirebaseStorage.instance.ref(urlFile).delete();
     } catch (e) {}
+  }
+
+  static Future<String> uploadMessageImageAndGetUrl({String myUid = "", File? filePhoto, String personUid = ""}) async {
+    try {
+      String fileName = basename(filePhoto!.path);
+      TaskSnapshot taskSnapshot = await FirebaseStorage.instance.ref().child('$myUid/$personUid/$fileName').putFile(filePhoto);
+      String newUrl = await taskSnapshot.ref.getDownloadURL();
+      return newUrl;
+    } catch (e) {
+      print(e);
+      return '';
+    }
   }
 }

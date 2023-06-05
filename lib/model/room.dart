@@ -75,8 +75,17 @@ class Room {
       uid: map['uid'] ?? '',
     );
   }
-
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => {
+        'email': email,
+        'inRoom': inRoom,
+        'lastChat': lastChat,
+        'lastDateTime': lastDateTime,
+        'lastUid': lastUid,
+        'name': name,
+        'photo': photo,
+        'type': type,
+        'uid': uid,
+      };
 
     factory Room.fromJson(Map<String, dynamic> json) => Room(
       email: json['email'] ?? '',

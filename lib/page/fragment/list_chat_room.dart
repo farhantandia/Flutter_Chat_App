@@ -7,6 +7,7 @@ import 'package:flutter_chat_app/model/chat.dart';
 import 'package:flutter_chat_app/model/person.dart';
 import 'package:flutter_chat_app/model/room.dart';
 import 'package:flutter_chat_app/page/chat_room.dart';
+import 'package:flutter_chat_app/page/profile_person.dart';
 import 'package:flutter_chat_app/utils/prefs.dart';
 import 'package:intl/intl.dart';
 
@@ -20,8 +21,15 @@ class ListChatRoom extends StatefulWidget {
 class _ListChatRoomState extends State<ListChatRoom> {
   Person? _myPerson;
   Stream<QuerySnapshot>? _streamRoom;
+  @override
+  void initState() {
+    // TODO: implement initState
+    getMyPerson();
+    super.initState();
+  }
+
   void getMyPerson() async {
-    Person person = await Prefs.getPerson();
+    Person? person = await Prefs.getPerson();
     setState(() {
       _myPerson = person;
     });
@@ -37,11 +45,11 @@ class _ListChatRoomState extends State<ListChatRoom> {
           children: [
             ListTile(
               onTap: () => Navigator.pop(context, 'delete'),
-              title: Text('Delete Chat Room'),
+              title: const Text('Delete Chat Room'),
             ),
             ListTile(
               onTap: () => Navigator.pop(context),
-              title: Text('CLose'),
+              title: const Text('Close'),
             ),
           ],
         );
@@ -58,17 +66,17 @@ class _ListChatRoomState extends State<ListChatRoom> {
       stream: _streamRoom,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return Center(child: Text('Something went wrong'));
+          return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
-        if (snapshot.data != null && snapshot.data!.docs!.isNotEmpty) {
+        if (snapshot.data != null && snapshot.data!.docs.isNotEmpty) {
           List<QueryDocumentSnapshot> listRoom = snapshot.data!.docs;
           return ListView.separated(
             itemCount: listRoom.length,
             separatorBuilder: (context, index) {
-              return Divider(thickness: 1, height: 1);
+              return const Divider(thickness: 1, height: 1);
             },
             itemBuilder: (context, index) {
               Map<String, dynamic> mapData = listRoom[index].data() as Map<String, dynamic>;
@@ -77,7 +85,7 @@ class _ListChatRoomState extends State<ListChatRoom> {
             },
           );
         } else {
-          return Center(child: Text('Empty'));
+          return const Center(child: Text('Empty'));
         }
       },
     );
@@ -85,7 +93,7 @@ class _ListChatRoomState extends State<ListChatRoom> {
 
   Widget itemRoom(Room room) {
     String today = DateFormat('yyyy/MM/dd').format(DateTime.now());
-    String yesterday = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(Duration(days: 1)));
+    String yesterday = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(const Duration(days: 1)));
     DateTime roomDateTime = DateTime.fromMicrosecondsSinceEpoch(room.lastDateTime);
     String stringLastDateTime = DateFormat('yyyy/MM/dd').format(roomDateTime);
     String time = '';
@@ -108,7 +116,7 @@ class _ListChatRoomState extends State<ListChatRoom> {
           deleteChatRoom(room.uid);
         },
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               GestureDetector(
@@ -120,20 +128,20 @@ class _ListChatRoomState extends State<ListChatRoom> {
                     token: '',
                     uid: room.uid,
                   );
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => ProfilePerson(
-                  //       person: person,
-                  //       myUid: _myPerson!.uid,
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePerson(
+                        person: person,
+                        myUid: _myPerson!.uid,
+                      ),
+                    ),
+                  );
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: FadeInImage(
-                    placeholder: AssetImage('assets/logo_flikchat.png'),
+                    placeholder: const AssetImage('assets/logo_flikchat.png'),
                     image: NetworkImage(room.photo),
                     width: 40,
                     height: 40,
@@ -149,23 +157,26 @@ class _ListChatRoomState extends State<ListChatRoom> {
                   ),
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(room.name),
+                    Text(
+                      room.name,
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                    ),
                     Row(
                       children: [
                         SizedBox(
                           child: room.type == 'image' ? Icon(Icons.image, size: 15, color: Colors.grey[700]) : null,
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           room.type == 'text'
-                              ? room.lastChat.length > 20
-                                  ? room.lastChat.substring(0, 20) + '...'
+                              ? room.lastChat.length > 15
+                                  ? room.lastChat.substring(0, 15) + '...'
                                   : room.lastChat
                               : ' <Image>',
                         ),
@@ -180,9 +191,9 @@ class _ListChatRoomState extends State<ListChatRoom> {
                 children: [
                   Text(
                     '$time',
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   countUnreadMessage(room.uid, room.lastDateTime),
                 ],
               ),
@@ -204,17 +215,20 @@ class _ListChatRoomState extends State<ListChatRoom> {
           .snapshots(includeMetadataChanges: true),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return SizedBox();
+          return const SizedBox();
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox();
+          return const SizedBox();
         }
         if (snapshot.data == null) {
-          return SizedBox();
+          return const SizedBox();
         }
         List<QueryDocumentSnapshot> listChat = snapshot.data!.docs;
-
-        QueryDocumentSnapshot lastChat = listChat.where((element ) => (element.data() as Map<String, dynamic>)['dateTime'] == lastDateTime).toList()[0];
+        // for (var element in listChat) {
+        //   print(element.data());
+        // }
+        QueryDocumentSnapshot lastChat =
+            listChat.where((element) => (element.data() as Map<String, dynamic>)['lastDateTime'] == lastDateTime).toList()[0];
 
         Map<String, dynamic> mapData = lastChat.data() as Map<String, dynamic>;
         Chat lastDataChat = Chat.fromJson(mapData);
@@ -228,24 +242,25 @@ class _ListChatRoomState extends State<ListChatRoom> {
         } else {
           int unRead = 0;
           for (var doc in listChat) {
-            Map<String, dynamic> mapData = doc as Map<String, dynamic>;
+            
+            Map<String, dynamic> mapData = doc.data() as Map<String, dynamic>;
             Chat docChat = Chat.fromJson(mapData);
             if (!docChat.isRead && docChat.uidSender == personUid) {
               unRead = unRead + 1;
             }
           }
           if (unRead == 0) {
-            return SizedBox();
+            return const SizedBox();
           } else {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.circular(10),
               ),
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               child: Text(
                 unRead.toString(),
-                style: TextStyle(color: Colors.white, fontSize: 12),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             );
           }
@@ -253,4 +268,5 @@ class _ListChatRoomState extends State<ListChatRoom> {
       },
     );
   }
+  
 }

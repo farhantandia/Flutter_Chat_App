@@ -1,16 +1,25 @@
 # flutter_chat_app
 
-A new Flutter project.
+my personal project of intermediate level Flutter app which implement firebase as the backend:
 
-## Getting Started
+- Flutter widgets (buttons, listview, builder, images),
+- Routes and Navigation (route pages, drawer, tabbar),
+- Firebase uthentication (login and register with data validation and email verification, reset password),
+- Implement Firebase storage 
+- Implement Firebase firestore 
+- Chat add. feature: unsent message, read indicator, unread messages counter, notification
 
-This project is a starting point for a Flutter application.
+This app is called Chat App, it is simply used to chat with our friends/family. I make this app as a baseline to make more interactive Flutter apps in the future.
 
-A few resources to get you started if this is your first Flutter project:
+## Screenshot
+Login Screen             | Drawer                   | Contact List                  | 
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://github.com/farhantandia/Flutter_Chat_App/blob/main/ss/9.jpg" width="250"/>|<img src="https://github.com/farhantandia/Github-User-App/blob/main/screenshot/1.jpg" width="250"/>|<img src="https://github.com/farhantandia/Github-User-App/blob/main/screenshot/2.jpg" width="250"/>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Profile Setting           | Chat Room             | Profile             |
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://github.com/farhantandia/Github-User-App/blob/main/screenshot/3.jpg" width="250"/>|<img src="https://github.com/farhantandia/Github-User-App/blob/main/screenshot/4.jpg" width="250"/>|<img src="https://github.com/farhantandia/Github-User-App/blob/main/screenshot/5.jpg" width="250"/>
+
+
+

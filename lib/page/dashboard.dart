@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +13,7 @@ import 'package:flutter_chat_app/page/login.dart';
 import 'package:flutter_chat_app/utils/image_controller.dart';
 import 'package:flutter_chat_app/utils/prefs.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:image_cropping/constant/strings.dart';
-import 'package:image_cropping/image_cropping.dart';
 
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
